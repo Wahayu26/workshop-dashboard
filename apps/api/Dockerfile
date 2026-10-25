@@ -12,16 +12,13 @@ COPY apps/api ./apps/api
 # Install dependencies & build
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @bengkelku/shared build
-RUN npx prisma generate --schema=./apps/api/prisma/schema.prisma
+RUN pnpm --filter @bengkelku/api db:generate
 RUN pnpm --filter @bengkelku/api build
-
 
 # Stage 2: Production runner
 FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-
-RUN npm install -g pnpm@10
 
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared/package.json ./packages/shared/
@@ -30,9 +27,9 @@ COPY apps/api/package.json ./apps/api/
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY apps/api/prisma ./apps/api/prisma
 
-
-RUN pnpm install --prod --filter @bengkelku/api
-RUN npx prisma generate --schema=./apps/api/prisma/schema.prisma
+# Copy node_modules from builder stage (zero redundant downloads, Prisma client included)
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 
 EXPOSE 4000
 CMD ["node", "apps/api/dist/main.js"]
