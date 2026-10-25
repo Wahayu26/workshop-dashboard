@@ -1,0 +1,16 @@
+{
+  "name": "workshop-dashboard-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BengkelKu - Modern Car & Motorcycle Workshop Management System",
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "dev:api": "pnpm --filter @bengkelku/api dev",
+    "dev:web": "pnpm --filter @bengkelku/web dev",
+    "build": "pnpm --filter \"./packages/*\" build && pnpm --filter \"./apps/*\" build",
+    "db:generate": "pnpm --filter @bengkelku/api db:generate",
+    "db:push": "pnpm --filter @bengkelku/api db:push",
+    "db:seed": "pnpm --filter @bengkelku/api db:seed"
+  },
+  "packageManager": "pnpm@10.17.1"
+}
