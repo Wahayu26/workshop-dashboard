@@ -99,6 +99,29 @@ const INITIAL_BOOKINGS: BookingItem[] = [
   },
 ];
 
+const SERVICE_CATALOG_OPTIONS = {
+  CAR: [
+    { label: 'Ganti Oli Mesin & Cek 15 Titik Keselamatan (Rp 50.000)', value: 'Ganti Oli Mesin & Cek 15 Titik' },
+    { label: 'Tune Up Mesin Injeksi & Carbon Clean (Rp 350.000)', value: 'Tune Up Mesin Injeksi & Carbon Clean' },
+    { label: 'Servis AC Komplit & Flushing Freon R134a (Rp 450.000)', value: 'Servis AC Komplit & Flushing Freon' },
+    { label: 'Servis Rem 4 Roda & Bubut Piringan Cakram (Rp 280.000)', value: 'Servis Rem 4 Roda & Bubut Cakram' },
+    { label: 'Spooring 3D & Balancing 4 Roda (Rp 250.000)', value: 'Spooring 3D & Balancing Roda' },
+    { label: 'Servis Berkala Kelipatan 10.000 / 20.000 KM (Rp 450.000)', value: 'Servis Berkala 10.000 / 20.000 KM' },
+    { label: 'Cek Kelistrikan & Uji Kapasitas Aki (Rp 35.000)', value: 'Cek Kelistrikan & Aki' },
+    { label: 'Others / Lainnya (Tuliskan Keluhan Sendiri)', value: 'OTHERS' },
+  ],
+  MOTORCYCLE: [
+    { label: 'Ganti Oli Mesin + Oli Gardan Matic (Rp 20.000)', value: 'Ganti Oli Mesin + Gardan' },
+    { label: 'Servis CVT Komplit Matic & Greasing (Rp 85.000)', value: 'Servis CVT Komplit Matic & Greasing' },
+    { label: 'Tune Up Injeksi Motor (Ultrasonic Cleaner) (Rp 95.000)', value: 'Tune Up Injeksi Motor' },
+    { label: 'Servis Sistem Rem Depan & Belakang (Rp 35.000)', value: 'Servis Rem Depan & Belakang' },
+    { label: 'Ganti Busi & Filter Udara (Rp 25.000)', value: 'Ganti Busi & Filter Udara' },
+    { label: 'Pembersihan Throttle Body & Kalibrasi ECU (Rp 50.000)', value: 'Pembersihan Throttle Body & ECU' },
+    { label: 'Cek Kelistrikan & Aki Motor (Rp 35.000)', value: 'Cek Kelistrikan & Aki Motor' },
+    { label: 'Others / Lainnya (Tuliskan Keluhan Sendiri)', value: 'OTHERS' },
+  ],
+};
+
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<BookingItem[]>(INITIAL_BOOKINGS);
   const [vehicleFilter, setVehicleFilter] = useState<VehicleFilter>('ALL');
@@ -113,7 +136,17 @@ export default function BookingsPage() {
   const [vPlate, setVPlate] = useState('');
   const [vModel, setVModel] = useState('');
   const [timeSlot, setTimeSlot] = useState('11:00 - 12:00');
-  const [notes, setNotes] = useState('');
+  const [selectedService, setSelectedService] = useState<string>(
+    SERVICE_CATALOG_OPTIONS.CAR[0].value
+  );
+  const [customNotes, setCustomNotes] = useState('');
+
+  const handleSelectVType = (type: 'CAR' | 'MOTORCYCLE') => {
+    setVType(type);
+    if (selectedService !== 'OTHERS') {
+      setSelectedService(SERVICE_CATALOG_OPTIONS[type][0].value);
+    }
+  };
 
   const filteredBookings = bookings.filter((bkg) => {
     const matchSearch =
@@ -145,6 +178,13 @@ export default function BookingsPage() {
     e.preventDefault();
     if (!custName || !vPlate) return;
 
+    const finalServiceNotes =
+      selectedService === 'OTHERS'
+        ? customNotes.trim() || 'Keluhan & servis khusus (Others)'
+        : customNotes.trim()
+        ? `${selectedService} — Catatan: ${customNotes.trim()}`
+        : selectedService;
+
     const nextQueue = bookings.length + 1;
     const newBkg: BookingItem = {
       id: `bkg-${Date.now()}`,
@@ -157,7 +197,7 @@ export default function BookingsPage() {
       vehicleModel: vModel || (vType === 'CAR' ? 'Toyota Avanza' : 'Honda Vario'),
       preferredDate: selectedDate,
       preferredTimeSlot: timeSlot,
-      serviceTypeNotes: notes || 'Servis berkala & ganti oli',
+      serviceTypeNotes: finalServiceNotes,
       status: 'CONFIRMED',
     };
 
@@ -167,7 +207,12 @@ export default function BookingsPage() {
     setCustPhone('');
     setVPlate('');
     setVModel('');
-    setNotes('');
+    setSelectedService(
+      vType === 'CAR'
+        ? SERVICE_CATALOG_OPTIONS.CAR[0].value
+        : SERVICE_CATALOG_OPTIONS.MOTORCYCLE[0].value
+    );
+    setCustomNotes('');
   };
 
   return (
@@ -408,7 +453,7 @@ export default function BookingsPage() {
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() => setVType('CAR')}
+                      onClick={() => handleSelectVType('CAR')}
                       className={`p-2 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all ${
                         vType === 'CAR'
                           ? 'border-racing-500 bg-racing-500/10 text-racing-500'
@@ -419,7 +464,7 @@ export default function BookingsPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setVType('MOTORCYCLE')}
+                      onClick={() => handleSelectVType('MOTORCYCLE')}
                       className={`p-2 rounded-xl border flex items-center justify-center gap-2 font-bold transition-all ${
                         vType === 'MOTORCYCLE'
                           ? 'border-yellow-500 bg-yellow-500/10 text-yellow-500'
@@ -493,18 +538,60 @@ export default function BookingsPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    Keluhan & Servis yang Diinginkan *
-                  </label>
-                  <textarea
-                    rows={2}
-                    required
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Contoh: Ganti oli rutin 10.000 km, cek sistem pengereman, dan tune up mesin"
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-racing-500 focus:outline-none"
-                  />
+                {/* Service Catalog Selection & Dynamic Others Input */}
+                <div className="space-y-3 pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <div>
+                    <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      Pilihan Layanan / Servis (Katalog) *
+                    </label>
+                    <select
+                      value={selectedService}
+                      onChange={(e) => setSelectedService(e.target.value)}
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-racing-500 focus:outline-none"
+                    >
+                      {SERVICE_CATALOG_OPTIONS[vType].map((item) => (
+                        <option key={item.value} value={item.value}>
+                          {item.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {selectedService === 'OTHERS' ? (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-1"
+                    >
+                      <div className="flex items-center justify-between">
+                        <label className="block font-semibold text-racing-600 dark:text-racing-400 text-xs">
+                          Tuliskan Keluhan & Servis yang Diinginkan (Isi Sendiri) *
+                        </label>
+                        <span className="text-[10px] text-slate-400">Mode Bebas / Custom</span>
+                      </div>
+                      <textarea
+                        rows={3}
+                        required
+                        value={customNotes}
+                        onChange={(e) => setCustomNotes(e.target.value)}
+                        placeholder="Tuliskan kendala Anda secara spesifik (Contoh: Tarikan gas berat saat menanjak, ada bunyi berdecit di rem belakang saat deselerasi, dll)"
+                        className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-racing-500/40 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-racing-500 focus:outline-none"
+                      />
+                    </motion.div>
+                  ) : (
+                    <div className="space-y-1">
+                      <label className="block font-medium text-slate-500 dark:text-slate-400 text-[11px]">
+                        Catatan Tambahan / Gejala Khusus (Opsional)
+                      </label>
+                      <input
+                        type="text"
+                        value={customNotes}
+                        onChange={(e) => setCustomNotes(e.target.value)}
+                        placeholder="Contoh: Bunyi gredek hanya saat pagi hari, sekalian cek wiper"
+                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-racing-500 focus:outline-none"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-2 flex justify-end gap-2">
