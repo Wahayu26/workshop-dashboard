@@ -1,6 +1,7 @@
 # Multi-stage Dockerfile for NestJS API in PNPM Monorepo
 FROM node:22-slim AS builder
 
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 RUN npm install -g pnpm@10
 WORKDIR /app
 
@@ -17,6 +18,7 @@ RUN pnpm --filter @bengkelku/api build
 
 # Stage 2: Production runner
 FROM node:22-slim AS runner
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ENV NODE_ENV=production
 
