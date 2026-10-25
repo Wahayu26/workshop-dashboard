@@ -1,14 +1,13 @@
 # Multi-stage Dockerfile for NestJS API in PNPM Monorepo
 FROM node:22-alpine AS builder
 
-RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
+RUN npm install -g pnpm@10
 WORKDIR /app
 
 # Copy root manifests & code
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared ./packages/shared
 COPY apps/api ./apps/api
-
 
 # Install dependencies & build
 RUN pnpm install --frozen-lockfile
@@ -20,7 +19,7 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
+RUN npm install -g pnpm@10
 
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared/package.json ./packages/shared/
