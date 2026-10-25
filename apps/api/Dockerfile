@@ -5,9 +5,10 @@ RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
 WORKDIR /app
 
 # Copy root manifests & code
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.base.json ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared ./packages/shared
 COPY apps/api ./apps/api
+
 
 # Install dependencies & build
 RUN pnpm install --frozen-lockfile
