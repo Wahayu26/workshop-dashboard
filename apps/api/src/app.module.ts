@@ -7,6 +7,8 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { ServicesModule } from './modules/services/services.module';
 import { SparePartsModule } from './modules/spare-parts/spare-parts.module';
 import { MechanicsModule } from './modules/mechanics/mechanics.module';
+import { BookingsModule } from './modules/bookings/bookings.module';
+import { WorkOrdersModule } from './modules/work-orders/work-orders.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { MechanicsModule } from './modules/mechanics/mechanics.module';
     ServicesModule,
     SparePartsModule,
     MechanicsModule,
+    BookingsModule,
+    WorkOrdersModule,
   ],
 })
 export class AppModule {}
