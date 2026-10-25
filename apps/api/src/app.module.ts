@@ -10,6 +10,8 @@ import { MechanicsModule } from './modules/mechanics/mechanics.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
 import { WorkOrdersModule } from './modules/work-orders/work-orders.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
+import { ReportsModule } from './modules/reports/reports.module';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
@@ -27,6 +29,9 @@ import { InvoicesModule } from './modules/invoices/invoices.module';
     BookingsModule,
     WorkOrdersModule,
     InvoicesModule,
+    ReportsModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}
+
