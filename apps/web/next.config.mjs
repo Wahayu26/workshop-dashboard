@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH !== undefined 
+  ? process.env.NEXT_PUBLIC_BASE_PATH 
+  : '/bengkelku';
+
 const nextConfig = {
   output: 'standalone',
+  basePath: basePath === '' ? undefined : basePath,
   reactStrictMode: true,
   transpilePackages: ['@bengkelku/shared'],
   async rewrites() {
@@ -12,6 +17,5 @@ const nextConfig = {
     ];
   },
 };
-
 
 export default nextConfig;

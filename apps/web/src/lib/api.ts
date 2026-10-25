@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH !== undefined
+  ? process.env.NEXT_PUBLIC_BASE_PATH
+  : '/bengkelku';
+
+const defaultBaseURL = `${basePath === '' ? '' : basePath}/api/v1`;
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || '/api/v1',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || defaultBaseURL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -28,7 +34,7 @@ api.interceptors.response.use(
   },
   async (error) => {
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      const isAuthPage = window.location.pathname.startsWith('/login');
+      const isAuthPage = window.location.pathname.includes('/login');
       if (!isAuthPage) {
         localStorage.removeItem('bengkelku_token');
         localStorage.removeItem('bengkelku_user');
