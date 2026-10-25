@@ -23,10 +23,11 @@ RUN npm install -g pnpm@10
 
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared/package.json ./packages/shared/
-COPY packages/shared/dist ./packages/shared/dist
+COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY apps/api/package.json ./apps/api/
-COPY apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY apps/api/prisma ./apps/api/prisma
+
 
 RUN pnpm install --prod --filter @bengkelku/api
 RUN npx prisma generate --schema=./apps/api/prisma/schema.prisma
