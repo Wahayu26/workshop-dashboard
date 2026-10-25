@@ -12,7 +12,9 @@ COPY apps/api ./apps/api
 # Install dependencies & build
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @bengkelku/shared build
+RUN npx prisma generate --schema=./apps/api/prisma/schema.prisma
 RUN pnpm --filter @bengkelku/api build
+
 
 # Stage 2: Production runner
 FROM node:22-alpine AS runner
