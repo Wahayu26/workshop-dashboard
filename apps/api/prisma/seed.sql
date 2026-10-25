@@ -24,13 +24,13 @@ VALUES
 ON CONFLICT ("id") DO NOTHING;
 
 -- Seed Service Categories
-INSERT INTO "service_categories" ("id", "name", "slug", "description", "icon", "created_at", "updated_at")
+INSERT INTO "service_categories" ("id", "name", "vehicle_type", "icon", "sort_order", "created_at", "updated_at")
 VALUES
-  ('cat-1', 'Ganti Oli & Pelumas', 'ganti-oli', 'Penggantian oli mesin, transmisi, gardan dan filter', 'Droplets', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('cat-2', 'Tune Up & Servis Berkala', 'tune-up', 'Pembersihan ruang bakar, injektor, busi, dan scanner OBD2', 'Wrench', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('cat-3', 'Sistem Pengereman', 'pengereman', 'Servis kampas rem, minyak rem, bubut piringan cakram', 'Disc', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('cat-4', 'AC Mobil & Pendingin', 'ac-mobil', 'Flushing freon, ganti oli kompresor, pembersihan blower', 'Wind', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('cat-5', 'CVT & Transmisi Motor', 'cvt-motor', 'Servis komplit mangkok kopling, v-belt, roller, dan greasing', 'Cog', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  ('cat-1', 'Ganti Oli & Pelumas', 'ALL', 'Droplets', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('cat-2', 'Tune Up & Servis Berkala', 'ALL', 'Wrench', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('cat-3', 'Sistem Pengereman', 'CAR', 'Disc', 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('cat-4', 'AC Mobil & Pendingin', 'CAR', 'Wind', 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('cat-5', 'CVT & Transmisi Motor', 'MOTORCYCLE', 'Cog', 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT ("id") DO NOTHING;
 
 -- Seed Services
@@ -46,10 +46,10 @@ VALUES
 ON CONFLICT ("id") DO NOTHING;
 
 -- Seed Mechanics
-INSERT INTO "mechanics" ("id", "user_id", "name", "phone", "specialization", "status", "max_concurrent_jobs", "rating", "created_at", "updated_at")
+INSERT INTO "mechanics" ("id", "user_id", "employee_id", "specialization", "status", "daily_target", "rating", "created_at", "updated_at")
 VALUES
-  ('mech-1', 'usr-mech-01', 'Agus Santoso', '081211110004', 'CAR_GENERAL', 'AVAILABLE', 2, 4.95, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-  ('mech-2', 'usr-mech-02', 'Bambang Irawan', '081211110005', 'MOTOR_GENERAL', 'AVAILABLE', 3, 4.92, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  ('mech-1', 'usr-mech-01', 'MECH-001', 'CAR_GENERAL', 'AVAILABLE', 5, 4.95, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('mech-2', 'usr-mech-02', 'MECH-002', 'MOTOR_GENERAL', 'AVAILABLE', 5, 4.92, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT ("id") DO NOTHING;
 
 -- Seed Customers
