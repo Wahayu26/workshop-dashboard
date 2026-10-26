@@ -362,3 +362,22 @@ gunzip -c /opt/bengkelku/backups/jayamotor_20261025.sql.gz | podman exec -i beng
 - [x] Database model Prisma mendukung relasi otomotif lengkap & indexing cepat.
 - [x] Frontend Next.js 14 mendukung standalone build yang ramah container mini.
 - [x] Seluruh routing port dan base API dinamis melalui environment variable `NEXT_PUBLIC_API_URL` dan `DATABASE_URL`.
+
+---
+
+## 11. Studi Kasus Nyata: Deployment Server UAT (`10.100.108.224`)
+
+Pada deployment aktual di server UAT Rocky Linux, BengkelKu berhasil dijalankan berdampingan (*coexistence*) secara harmonis dengan aplikasi eksisting (**BengkelFlow**) di port 80 tanpa konflik port maupun gangguan firewall jaringan:
+
+### Topologi Port & Routing:
+* **Apache HTTPD (Port 80 Host)**: Berfungsi sebagai Ingress / Reverse Proxy publik.
+  * `/cars/` &rarr; Proxy ke container `bengkelflow-bengkel01` (`http://127.0.0.1:8101/cars/`)
+  * `/bengkelku/` &rarr; Proxy ke container `bengkelku-web-01` (`http://127.0.0.1:8201/bengkelku/`)
+* **Container BengkelKu**:
+  * `bengkelku-web-01`: Port `8201:3000` (`localhost/bengkelku-web:latest`)
+  * `bengkelku-api-01`: Port `4001:4000` (`localhost/bengkelku-api:latest`)
+  * `bengkelku-postgres`: Port `5432:5432` (`postgres:16-alpine`)
+* **SELinux Requirement**:
+  ```bash
+  setsebool -P httpd_can_network_connect 1
+  ```
