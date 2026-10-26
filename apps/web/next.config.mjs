@@ -6,6 +6,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH !== undefined
 const nextConfig = {
   output: 'standalone',
   basePath: basePath === '' ? undefined : basePath,
+  skipTrailingSlashRedirect: true,
   reactStrictMode: true,
   transpilePackages: ['@bengkelku/shared'],
   async rewrites() {
